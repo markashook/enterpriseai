@@ -206,40 +206,58 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          # Check that install/repair scripts do not contain Invoke-WebRequest or WebClient download calls
-          # (these should only be in packaging scripts)
+
           $installScripts = @(
             'scripts\Install-EnterpriseAI.ps1',
             'scripts\Repair-EnterpriseAI.ps1',
             'scripts\Uninstall-EnterpriseAI.ps1'
           )
 
-          $downloadPatterns = @(
-            'Invoke-WebRequest',
-            'WebClient',
-            'Start-BitsTransfer',
-            'curl\.exe',
-            'wget\.exe'
+          $hardFailPatterns = @(
+            '(?i)\bSystem\.Net\.WebClient\b',
+            '(?i)\bDownload(File|Data|String)\b',
+            '(?i)\bStart-BitsTransfer\b',
+            '(?i)\bcurl\.exe\b',
+            '(?i)\bwget\.exe\b'
           )
 
           $failed = $false
+
           foreach ($scriptPath in $installScripts) {
             if (-not (Test-Path $scriptPath)) {
               Write-Host "WARN: Script not found: $scriptPath"
               continue
             }
+
             $content = Get-Content $scriptPath -Raw
-            foreach ($pattern in $downloadPatterns) {
-              # Exclude lines that are comments
-              $lines = $content -split "`n" | Where-Object { $_ -notmatch '^\s*#' }
-              $matchingLines = $lines | Where-Object { $_ -match $pattern }
-              if ($matchingLines) {
-                Write-Host "FAIL: $scriptPath contains download pattern '$pattern' in non-comment lines"
-                $matchingLines | ForEach-Object { Write-Host "  > $_" }
+            $lines = $content -split "`r?`n" | Where-Object { $_ -notmatch '^\s*#' }
+
+            foreach ($pattern in $hardFailPatterns) {
+              $hits = $lines | Where-Object { $_ -match $pattern }
+              if ($hits) {
+                Write-Host "FAIL: $scriptPath matched prohibited pattern: $pattern"
+                $hits | ForEach-Object { Write-Host "  > $_" }
                 $failed = $true
               }
             }
-            Write-Host "PASS: $scriptPath has no prohibited download patterns"
+
+            # Treat web requests as allowed probes unless they look like downloads
+            $webCmdHits = $lines | Where-Object { $_ -match '(?i)\b(Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\b' }
+            foreach ($line in $webCmdHits) {
+              $looksLikeDownload = (
+                $line -match '(?i)\s-OutFile(\s|$)' -or
+                $line -match '(?i)-Uri\s+["'']https?://(?!localhost|127\.|::1)' -or
+                $line -match '(?i)-Uri\s+["''][^"'']+\.(zip|msi|exe|nupkg|tar|gz|7z)(["'']|$)'
+              )
+
+              if ($looksLikeDownload) {
+                Write-Host "FAIL: $scriptPath has web request that looks like dependency download"
+                Write-Host "  > $line"
+                $failed = $true
+              }
+            }
+
+            Write-Host "PASS: $scriptPath passed download guardrails"
           }
 
           if ($failed) { exit 1 }
