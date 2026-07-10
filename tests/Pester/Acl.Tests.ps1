@@ -4,10 +4,10 @@
     Pester tests for EnterpriseAI ACL module.
 #>
 
-BeforeAll {
-    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-    $ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Acl.psm1'
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Acl.psm1'
 
+BeforeAll {
     if (Test-Path $ModulePath) {
         Import-Module $ModulePath -Force
     }

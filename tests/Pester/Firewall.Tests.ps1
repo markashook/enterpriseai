@@ -4,11 +4,12 @@
     Pester tests for EnterpriseAI firewall module.
 #>
 
-BeforeAll {
-    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-    $ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
-    $FirewallPolicy = Join-Path $RepoRoot 'config\firewall.policy.json'
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
 
+BeforeAll {
+    $FirewallPolicy = Join-Path $RepoRoot 'config\firewall.policy.json'
+    
     if (Test-Path $ModulePath) {
         Import-Module $ModulePath -Force
     }

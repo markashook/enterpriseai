@@ -4,9 +4,10 @@
     Pester tests for EnterpriseAI.Config module and config parsing.
 #>
 
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
+
 BeforeAll {
-    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-    $ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
     $ValidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.valid.json'
     $InvalidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.invalid.json'
 
