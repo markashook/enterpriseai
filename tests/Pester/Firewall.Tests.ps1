@@ -5,13 +5,13 @@
 #>
 
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
+$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
 
 BeforeAll {
     $FirewallPolicy = Join-Path $RepoRoot 'config\firewall.policy.json'
     
-    if (Test-Path $ModulePath) {
-        Import-Module $ModulePath -Force
+    if (Test-Path $script:ModulePath) {
+        Import-Module $script:ModulePath -Force
     }
 }
 
@@ -79,26 +79,26 @@ Describe 'Firewall - Policy file' {
 
 Describe 'Firewall - Module' {
     It 'Firewall module file exists' {
-        $ModulePath | Should -Exist
+        $script:ModulePath | Should -Exist
     }
 
-    It 'Module can be imported without errors' -Skip:(!(Test-Path $ModulePath)) {
-        { Import-Module $ModulePath -Force } | Should -Not -Throw
+    It 'Module can be imported without errors' -Skip:(!(Test-Path $script:ModulePath)) {
+        { Import-Module $script:ModulePath -Force } | Should -Not -Throw
     }
 
-    It 'New-EAIFirewallRules function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'New-EAIFirewallRules function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name New-EAIFirewallRules -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Test-EAIFirewallRules function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Test-EAIFirewallRules function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Test-EAIFirewallRules -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Repair-EAIFirewallRules function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Repair-EAIFirewallRules function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Repair-EAIFirewallRules -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Remove-EAIFirewallRules function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Remove-EAIFirewallRules function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Remove-EAIFirewallRules -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 }

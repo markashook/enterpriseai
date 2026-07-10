@@ -5,56 +5,56 @@
 #>
 
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
+$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
 
 BeforeAll {
-    if (Test-Path $ModulePath) {
-        Import-Module $ModulePath -Force
+    if (Test-Path $script:ModulePath) {
+        Import-Module $script:ModulePath -Force
     }
 }
 
 Describe 'Services - Module' {
     It 'Services module file exists' {
-        $ModulePath | Should -Exist
+        $script:ModulePath | Should -Exist
     }
 
-    It 'Module can be imported without errors' -Skip:(!(Test-Path $ModulePath)) {
-        { Import-Module $ModulePath -Force } | Should -Not -Throw
+    It 'Module can be imported without errors' -Skip:(!(Test-Path $script:ModulePath)) {
+        { Import-Module $script:ModulePath -Force } | Should -Not -Throw
     }
 
-    It 'New-EAIOllamaService function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'New-EAIOllamaService function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name New-EAIOllamaService -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'New-EAILiteLLMService function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'New-EAILiteLLMService function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name New-EAILiteLLMService -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Set-EAIServiceRecovery function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAIServiceRecovery function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAIServiceRecovery -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Start-EAIService function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Start-EAIService function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Start-EAIService -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Stop-EAIService function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Stop-EAIService function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Stop-EAIService -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Remove-EAIService function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Remove-EAIService function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Remove-EAIService -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Test-EAIServiceExists function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Test-EAIServiceExists function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Test-EAIServiceExists -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Test-EAIServiceRunning function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Test-EAIServiceRunning function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Test-EAIServiceRunning -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Repair-EAIServices function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Repair-EAIServices function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Repair-EAIServices -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 }

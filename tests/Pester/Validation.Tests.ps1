@@ -5,14 +5,14 @@
 #>
 
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
+$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
 
 BeforeAll {
     $ValidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.valid.json'
     $InvalidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.invalid.json'
 
-    if (Test-Path $ModulePath) {
-        Import-Module $ModulePath -Force
+    if (Test-Path $script:ModulePath) {
+        Import-Module $script:ModulePath -Force
     }
 }
 
@@ -85,22 +85,22 @@ Describe 'Config - Invalid fixture' {
 
 Describe 'Config - EnterpriseAI.Config module' {
     It 'Module file exists' {
-        $ModulePath | Should -Exist
+        $script:ModulePath | Should -Exist
     }
 
-    It 'Module can be imported without errors' -Skip:(!(Test-Path $ModulePath)) {
-        { Import-Module $ModulePath -Force } | Should -Not -Throw
+    It 'Module can be imported without errors' -Skip:(!(Test-Path $script:ModulePath)) {
+        { Import-Module $script:ModulePath -Force } | Should -Not -Throw
     }
 
-    It 'Read-EAIPackageConfig function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Read-EAIPackageConfig function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Read-EAIPackageConfig -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Test-EAIConfigValid function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Test-EAIConfigValid function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Test-EAIConfigValid -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Read-EAIPackageConfig returns valid config from valid fixture' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Read-EAIPackageConfig returns valid config from valid fixture' -Skip:(!(Test-Path $script:ModulePath)) {
         $result = Read-EAIPackageConfig -ConfigPath $ValidFixture
         $result | Should -Not -BeNullOrEmpty
         $result.PackageName | Should -Not -BeNullOrEmpty

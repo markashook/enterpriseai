@@ -5,48 +5,48 @@
 #>
 
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Acl.psm1'
+$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Acl.psm1'
 
 BeforeAll {
-    if (Test-Path $ModulePath) {
-        Import-Module $ModulePath -Force
+    if (Test-Path $script:ModulePath) {
+        Import-Module $script:ModulePath -Force
     }
 }
 
 Describe 'ACL - Module' {
     It 'ACL module file exists' {
-        $ModulePath | Should -Exist
+        $script:ModulePath | Should -Exist
     }
 
-    It 'Module can be imported without errors' -Skip:(!(Test-Path $ModulePath)) {
-        { Import-Module $ModulePath -Force } | Should -Not -Throw
+    It 'Module can be imported without errors' -Skip:(!(Test-Path $script:ModulePath)) {
+        { Import-Module $script:ModulePath -Force } | Should -Not -Throw
     }
 
-    It 'Set-EAIInstallRootAcl function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAIInstallRootAcl function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAIInstallRootAcl -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Set-EAIProgramDataAcl function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAIProgramDataAcl function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAIProgramDataAcl -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Set-EAISecretsAcl function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAISecretsAcl function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAISecretsAcl -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Set-EAILogsAcl function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAILogsAcl function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAILogsAcl -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Set-EAIModelsAcl function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Set-EAIModelsAcl function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Set-EAIModelsAcl -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Test-EAIAclCompliant function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Test-EAIAclCompliant function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Test-EAIAclCompliant -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 
-    It 'Repair-EAIAcls function exists' -Skip:(!(Test-Path $ModulePath)) {
+    It 'Repair-EAIAcls function exists' -Skip:(!(Test-Path $script:ModulePath)) {
         Get-Command -Name Repair-EAIAcls -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
     }
 }
