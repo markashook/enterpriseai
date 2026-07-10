@@ -4,8 +4,8 @@
     Pester tests for EnterpriseAI Services module.
 #>
 
-$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
+$script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
 
 BeforeAll {
     if (Test-Path $script:ModulePath) {
@@ -61,13 +61,13 @@ Describe 'Services - Module' {
 
 Describe 'Services - Config values' {
     It 'Config OllamaServiceName is EnterpriseAI-Ollama' {
-        $configPath = Join-Path $RepoRoot 'config\enterpriseai.package.json'
+        $configPath = Join-Path $script:RepoRoot 'config\enterpriseai.package.json'
         $config = Get-Content $configPath -Raw | ConvertFrom-Json
         $config.OllamaServiceName | Should -Be 'EnterpriseAI-Ollama'
     }
 
     It 'Config LiteLLMServiceName is EnterpriseAI-LiteLLM' {
-        $configPath = Join-Path $RepoRoot 'config\enterpriseai.package.json'
+        $configPath = Join-Path $script:RepoRoot 'config\enterpriseai.package.json'
         $config = Get-Content $configPath -Raw | ConvertFrom-Json
         $config.LiteLLMServiceName | Should -Be 'EnterpriseAI-LiteLLM'
     }

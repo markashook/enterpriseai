@@ -4,12 +4,12 @@
     Pester tests for EnterpriseAI.Config module and config parsing.
 #>
 
-$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
+$script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
 
 BeforeAll {
-    $ValidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.valid.json'
-    $InvalidFixture = Join-Path $RepoRoot 'tests\fixtures\package-config.invalid.json'
+    $ValidFixture = Join-Path $script:RepoRoot 'tests\fixtures\package-config.valid.json'
+    $InvalidFixture = Join-Path $script:RepoRoot 'tests\fixtures\package-config.invalid.json'
 
     if (Test-Path $script:ModulePath) {
         Import-Module $script:ModulePath -Force
@@ -109,19 +109,19 @@ Describe 'Config - EnterpriseAI.Config module' {
 
 Describe 'Config - Approved models fixture' {
     It 'Approved models fixture is valid JSON' {
-        $fixture = Join-Path $RepoRoot 'tests\fixtures\approved-models.valid.json'
+        $fixture = Join-Path $script:RepoRoot 'tests\fixtures\approved-models.valid.json'
         { Get-Content $fixture -Raw | ConvertFrom-Json } | Should -Not -Throw
     }
 
     It 'Approved models fixture has Models array' {
-        $fixture = Join-Path $RepoRoot 'tests\fixtures\approved-models.valid.json'
+        $fixture = Join-Path $script:RepoRoot 'tests\fixtures\approved-models.valid.json'
         $models = (Get-Content $fixture -Raw | ConvertFrom-Json).Models
         $models | Should -Not -BeNullOrEmpty
         $models.Count | Should -BeGreaterThan 0
     }
 
     It 'All model aliases are non-empty' {
-        $fixture = Join-Path $RepoRoot 'tests\fixtures\approved-models.valid.json'
+        $fixture = Join-Path $script:RepoRoot 'tests\fixtures\approved-models.valid.json'
         $models = (Get-Content $fixture -Raw | ConvertFrom-Json).Models
         foreach ($model in $models) {
             $model.Alias | Should -Not -BeNullOrEmpty

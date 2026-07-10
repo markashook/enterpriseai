@@ -4,11 +4,11 @@
     Pester tests for EnterpriseAI firewall module.
 #>
 
-$RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
+$script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
 
 BeforeAll {
-    $FirewallPolicy = Join-Path $RepoRoot 'config\firewall.policy.json'
+    $FirewallPolicy = Join-Path $script:RepoRoot 'config\firewall.policy.json'
     
     if (Test-Path $script:ModulePath) {
         Import-Module $script:ModulePath -Force
@@ -105,14 +105,14 @@ Describe 'Firewall - Module' {
 
 Describe 'Firewall - Security requirements' {
     It 'Config default endpoints are loopback-only' {
-        $configPath = Join-Path $RepoRoot 'config\enterpriseai.package.json'
+        $configPath = Join-Path $script:RepoRoot 'config\enterpriseai.package.json'
         $config = Get-Content $configPath -Raw | ConvertFrom-Json
         $config.LiteLLMEndpoint | Should -Match '^http://127\.'
         $config.OllamaEndpoint | Should -Match '^http://127\.'
     }
 
     It 'Config RuntimeModelPullsEnabled is false by default' {
-        $configPath = Join-Path $RepoRoot 'config\enterpriseai.package.json'
+        $configPath = Join-Path $script:RepoRoot 'config\enterpriseai.package.json'
         $config = Get-Content $configPath -Raw | ConvertFrom-Json
         $config.RuntimeModelPullsEnabled | Should -Be $false
     }
