@@ -4,15 +4,12 @@
     Pester tests for EnterpriseAI Services module.
 #>
 
-# Computed at script level so that -Skip: conditions can reference $ModulePath during
-# Pester's discovery phase (BeforeAll has not yet run at that point).
+# Path variables are defined at script level so they are available during Pester 5's
+# discovery phase, when -Skip: conditions are evaluated (before BeforeAll runs).
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
 
 BeforeAll {
-    $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-    $ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Services.psm1'
-
     if (Test-Path $ModulePath) {
         Import-Module $ModulePath -Force
     }
