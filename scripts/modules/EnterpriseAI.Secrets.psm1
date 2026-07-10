@@ -89,7 +89,13 @@ function Get-EAILiteLLMApiKey {
     }
 
     $plainText = (Get-Content -LiteralPath $secretPath -Raw -ErrorAction Stop).Trim()
-    return ConvertTo-SecureString -String $plainText -AsPlainText -Force
+    $secureString = New-Object System.Security.SecureString
+    foreach ($character in $plainText.ToCharArray()) {
+        $secureString.AppendChar($character)
+    }
+
+    $secureString.MakeReadOnly()
+    return $secureString
 }
 
 function Test-EAISecretExists {
