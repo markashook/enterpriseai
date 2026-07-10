@@ -1,0 +1,54 @@
+{
+  "FirewallRulePrefix": "EnterpriseAI-",
+  "Rules": [
+    {
+      "Name": "EnterpriseAI-LiteLLM-Inbound-Block-NonLoopback",
+      "Direction": "Inbound",
+      "Action": "Block",
+      "Protocol": "TCP",
+      "LocalPort": 4000,
+      "RemoteAddress": "any",
+      "Description": "Block non-loopback inbound to LiteLLM. Loopback binding is the primary protection; this rule adds defense-in-depth.",
+      "Note": "Windows Firewall may not enforce per-process loopback rules in all configurations. See INTENT.md section 11."
+    },
+    {
+      "Name": "EnterpriseAI-LiteLLM-Inbound-Allow-Loopback",
+      "Direction": "Inbound",
+      "Action": "Allow",
+      "Protocol": "TCP",
+      "LocalPort": 4000,
+      "RemoteAddress": "127.0.0.1",
+      "Description": "Allow loopback inbound to LiteLLM"
+    },
+    {
+      "Name": "EnterpriseAI-Ollama-Inbound-Block-NonLoopback",
+      "Direction": "Inbound",
+      "Action": "Block",
+      "Protocol": "TCP",
+      "LocalPort": 11434,
+      "RemoteAddress": "any",
+      "Description": "Block non-loopback inbound to Ollama backend. Users should not connect to Ollama directly.",
+      "Note": "Windows Firewall may not enforce per-process loopback rules in all configurations. Validation produces WARN not FAIL for loopback isolation checks. See INTENT.md section 11."
+    },
+    {
+      "Name": "EnterpriseAI-Ollama-Inbound-Allow-Loopback",
+      "Direction": "Inbound",
+      "Action": "Allow",
+      "Protocol": "TCP",
+      "LocalPort": 11434,
+      "RemoteAddress": "127.0.0.2",
+      "Description": "Allow loopback inbound to Ollama from LiteLLM backend"
+    },
+    {
+      "Name": "EnterpriseAI-Ollama-Outbound-Block-Internet",
+      "Direction": "Outbound",
+      "Action": "Block",
+      "Protocol": "TCP",
+      "RemotePort": "80,443",
+      "RemoteAddress": "any",
+      "Description": "Block Ollama outbound to Internet to prevent arbitrary model pulls. RuntimeModelPullsEnabled must be false (default).",
+      "Note": "This rule is broad. When RuntimeModelPullsEnabled is true, the approved registry URL must be permitted instead."
+    }
+  ],
+  "Note": "Rules with Action=Block for TCP 4000/11434 inbound provide defense-in-depth. The primary isolation mechanism is the loopback-only binding (127.0.0.1 and 127.0.0.2). Windows Firewall limitations are documented in INTENT.md."
+}

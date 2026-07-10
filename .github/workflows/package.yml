@@ -1,0 +1,90 @@
+name: Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version override (leave blank to use VERSION file)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  build-package:
+    name: Build Release Package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate dependencies.lock.json has no PLACEHOLDER values
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $lockFile = 'manifest\dependencies.lock.json'
+          $content = Get-Content $lockFile -Raw
+          if ($content -match '"PLACEHOLDER"') {
+            Write-Host "ERROR: dependencies.lock.json contains PLACEHOLDER values."
+            Write-Host "Update all pinned versions and SHA256 hashes before building a release package."
+            exit 5
+          }
+          Write-Host "No PLACEHOLDER values found in dependencies.lock.json."
+
+      - name: Download and stage vendor dependencies
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = '${{ github.event.inputs.version }}'
+          Write-Host "Running New-DependencyBundle.ps1..."
+          & '.\packaging\New-DependencyBundle.ps1' -OutputPath '.'
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Dependency bundling failed with exit code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify dependency hashes
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & '.\packaging\Verify-DependencyBundle.ps1'
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Hash verification failed with exit code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+
+      - name: Generate SBOM
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & '.\packaging\Generate-Sbom.ps1' -RepoRoot '.'
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "SBOM generation failed (non-fatal), continuing..."
+          }
+
+      - name: Build package ZIP
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = '${{ github.event.inputs.version }}'
+          $buildArgs = @{ RepoRoot = '.'; OutputDir = 'dist' }
+          if ($version -ne '') { $buildArgs['Version'] = $version }
+          & '.\packaging\Build-Package.ps1' @buildArgs
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Package build failed with exit code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+
+      - name: List build artifacts
+        shell: powershell
+        run: |
+          Get-ChildItem -Path 'dist' | Format-Table -AutoSize
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EnterpriseAI-Package
+          path: dist/
+          if-no-files-found: error

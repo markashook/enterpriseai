@@ -1,0 +1,8 @@
+# EnterpriseAI Package SHA256 Hashes
+# Format: <SHA256>  <filename>
+# Generated during CI packaging. All placeholders must be replaced before release.
+#
+# PLACEHOLDER  ollama-windows-amd64.zip
+# PLACEHOLDER  python-embed-amd64.zip
+# PLACEHOLDER  litellm-wheelhouse.zip
+# PLACEHOLDER  nssm.zip

@@ -1,0 +1,16 @@
+{
+  "Models": [
+    {
+      "Alias": "approved-chat",
+      "Backend": "ollama_chat/approved-chat-model",
+      "Description": "Approved general chat model",
+      "Enabled": true
+    },
+    {
+      "Alias": "approved-code",
+      "Backend": "ollama_chat/approved-code-model",
+      "Description": "Approved coding assistance model",
+      "Enabled": true
+    }
+  ]
+}

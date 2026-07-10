@@ -1,0 +1,37 @@
+{
+  "PackageName": "EnterpriseAI Local Runtime and Gateway",
+  "PackageShortName": "EnterpriseAI",
+  "PackageVersion": "1.0.0",
+  "Architecture": "win-x64",
+  "Description": "Workstation-local AI runtime (Ollama) and OpenAI-compatible gateway (LiteLLM) for enterprise developer workstations.",
+  "Publisher": "EnterpriseAI",
+  "InstallRoot": "C:\\Program Files\\EnterpriseAI",
+  "ProgramDataRoot": "C:\\ProgramData\\EnterpriseAI",
+  "RegistryKey": "HKLM:\\Software\\EnterpriseAI\\LocalRuntimeGateway",
+  "RequiredPlatform": "Windows",
+  "MinimumOSVersion": "10.0.17763",
+  "Components": [
+    {
+      "Name": "Ollama",
+      "SourceDir": "vendor\\ollama",
+      "InstallDir": "ollama",
+      "Service": "EnterpriseAI-Ollama"
+    },
+    {
+      "Name": "LiteLLM",
+      "SourceDir": "vendor\\litellm",
+      "InstallDir": "litellm",
+      "Service": "EnterpriseAI-LiteLLM"
+    },
+    {
+      "Name": "Python",
+      "SourceDir": "vendor\\python",
+      "InstallDir": "python"
+    },
+    {
+      "Name": "ServiceWrapper",
+      "SourceDir": "vendor\\service-wrapper",
+      "InstallDir": "service-wrapper"
+    }
+  ]
+}
