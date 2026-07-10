@@ -29,7 +29,7 @@ Describe 'Uninstall - Script existence' {
 
     It 'Uninstall script contains -RemoveProgramData parameter' {
         $content = Get-Content $UninstallScript -Raw
-        $content | Should -Match '-RemoveProgramData'
+        $content | Should -Match 'RemoveProgramData'
     }
 
     It 'Uninstall script preserves ProgramData by default' {

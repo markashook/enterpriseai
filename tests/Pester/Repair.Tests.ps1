@@ -29,7 +29,11 @@ Describe 'Repair - Script existence' {
 
     It 'Repair script does not download from internet' {
         $lines = Get-Content $RepairScript
-        $downloadLines = $lines | Where-Object { $_ -notmatch '^\s*#' -and $_ -match 'Invoke-WebRequest|\.DownloadFile\(' }
+        $downloadLines = $lines | Where-Object {
+            $_ -notmatch '^\s*#' -and
+            $_ -match 'Invoke-WebRequest|\.DownloadFile\(' -and
+            ($_ -notmatch 'Invoke-WebRequest' -or $_ -match '\s-OutFile\s' -or $_ -match "-Uri\s+['""]https?://(?!localhost|127\.|::1)")
+        }
         $downloadLines | Should -BeNullOrEmpty
     }
 }

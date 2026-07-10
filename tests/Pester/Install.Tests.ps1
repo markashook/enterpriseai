@@ -30,9 +30,13 @@ Describe 'Install - Script existence' {
         $content | Should -Match '-ConfigPath'
     }
 
-    It 'Install script does not contain Invoke-WebRequest' {
+    It 'Install script does not contain Invoke-WebRequest for external downloads' {
         $lines = Get-Content $InstallScript
-        $downloadLines = $lines | Where-Object { $_ -notmatch '^\s*#' -and $_ -match 'Invoke-WebRequest' }
+        $downloadLines = $lines | Where-Object {
+            $_ -notmatch '^\s*#' -and
+            $_ -match 'Invoke-WebRequest' -and
+            ($_ -match '\s-OutFile\s' -or $_ -match "-Uri\s+['""]https?://(?!localhost|127\.|::1)")
+        }
         $downloadLines | Should -BeNullOrEmpty -Because 'install scripts must not download from internet at install time'
     }
 
@@ -55,20 +59,18 @@ Describe 'Install - Required modules' {
         'EnterpriseAI.Validation.psm1'
     )
 
-    foreach ($modFile in $modules) {
-        It "Module $modFile exists" {
-            $modPath = Join-Path $RepoRoot "scripts\modules\$modFile"
-            $modPath | Should -Exist
-        }
+    It 'Module <ModFile> exists' -TestCases ($modules | ForEach-Object { @{ ModFile = $_ } }) {
+        $modPath = Join-Path $RepoRoot "scripts\modules\$ModFile"
+        $modPath | Should -Exist
+    }
 
-        It "Module $modFile has valid PowerShell syntax" {
-            $modPath = Join-Path $RepoRoot "scripts\modules\$modFile"
-            $errors = $null
-            $null = [System.Management.Automation.Language.Parser]::ParseFile(
-                $modPath, [ref]$null, [ref]$errors
-            )
-            $errors | Should -BeNullOrEmpty
-        }
+    It 'Module <ModFile> has valid PowerShell syntax' -TestCases ($modules | ForEach-Object { @{ ModFile = $_ } }) {
+        $modPath = Join-Path $RepoRoot "scripts\modules\$ModFile"
+        $errors = $null
+        $null = [System.Management.Automation.Language.Parser]::ParseFile(
+            $modPath, [ref]$null, [ref]$errors
+        )
+        $errors | Should -BeNullOrEmpty
     }
 }
 

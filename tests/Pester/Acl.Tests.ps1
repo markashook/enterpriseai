@@ -8,6 +8,7 @@ $RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $script:ModulePath = Join-Path $RepoRoot 'scripts\modules\EnterpriseAI.Acl.psm1'
 
 BeforeAll {
+    $script:ModulePath = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'scripts\modules\EnterpriseAI.Acl.psm1'
     if (Test-Path $script:ModulePath) {
         Import-Module $script:ModulePath -Force
     }
