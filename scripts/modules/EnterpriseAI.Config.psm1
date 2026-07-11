@@ -105,6 +105,7 @@ function Read-EAIPackageConfig {
     [CmdletBinding()]
     param(
         [Parameter()]
+        [Alias('ConfigPath')]
         [ValidateNotNullOrEmpty()]
         [string]$Path = (Get-EAIConfigPath)
     )
