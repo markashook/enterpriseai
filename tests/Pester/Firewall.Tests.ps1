@@ -8,8 +8,10 @@ $script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
 
 BeforeAll {
+    $script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+    $script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Firewall.psm1'
     $FirewallPolicy = Join-Path $script:RepoRoot 'config\firewall.policy.json'
-    
+
     if (Test-Path $script:ModulePath) {
         Import-Module $script:ModulePath -Force
     }

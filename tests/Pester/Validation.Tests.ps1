@@ -8,6 +8,8 @@ $script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
 
 BeforeAll {
+    $script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+    $script:ModulePath = Join-Path $script:RepoRoot 'scripts\modules\EnterpriseAI.Config.psm1'
     $ValidFixture = Join-Path $script:RepoRoot 'tests\fixtures\package-config.valid.json'
     $InvalidFixture = Join-Path $script:RepoRoot 'tests\fixtures\package-config.invalid.json'
 
