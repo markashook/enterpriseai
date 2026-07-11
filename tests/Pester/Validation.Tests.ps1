@@ -101,7 +101,7 @@ Describe 'Config - EnterpriseAI.Config module' {
     }
 
     It 'Read-EAIPackageConfig returns valid config from valid fixture' -Skip:(!(Test-Path $script:ModulePath)) {
-        $result = Read-EAIPackageConfig -ConfigPath $ValidFixture
+        $result = Read-EAIPackageConfig -Path $ValidFixture
         $result | Should -Not -BeNullOrEmpty
         $result.PackageName | Should -Not -BeNullOrEmpty
     }
