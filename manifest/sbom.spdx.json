@@ -1,0 +1,72 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "PLACEHOLDER",
+    "creators": ["Tool: EnterpriseAI-Generate-Sbom"],
+    "comment": "SBOM generated during CI packaging. Replace placeholders before release."
+  },
+  "name": "EnterpriseAI Local Runtime and Gateway",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://github.com/markashook/enterpriseai/sbom/PLACEHOLDER",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-EnterpriseAI",
+      "name": "EnterpriseAI Local Runtime and Gateway",
+      "versionInfo": "PLACEHOLDER",
+      "downloadLocation": "https://github.com/markashook/enterpriseai",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Ollama",
+      "name": "ollama",
+      "versionInfo": "PLACEHOLDER",
+      "downloadLocation": "https://github.com/ollama/ollama",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-LiteLLM",
+      "name": "litellm",
+      "versionInfo": "PLACEHOLDER",
+      "downloadLocation": "https://github.com/BerriAI/litellm",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Python",
+      "name": "Python",
+      "versionInfo": "PLACEHOLDER",
+      "downloadLocation": "https://www.python.org",
+      "licenseConcluded": "PSF-2.0",
+      "licenseDeclared": "PSF-2.0",
+      "copyrightText": "NOASSERTION"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-EnterpriseAI"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-EnterpriseAI",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-Ollama"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-EnterpriseAI",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-LiteLLM"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-EnterpriseAI",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-Python"
+    }
+  ]
+}

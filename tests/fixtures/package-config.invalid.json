@@ -1,0 +1,14 @@
+{
+  "PackageName": "EnterpriseAI Local Runtime and Gateway",
+  "PackageShortName": "EnterpriseAI",
+  "InstallRoot": "",
+  "ProgramDataRoot": "C:\\ProgramData\\EnterpriseAI",
+  "ServiceAccountName": "",
+  "OllamaServiceName": "EnterpriseAI-Ollama",
+  "LiteLLMServiceName": "EnterpriseAI-LiteLLM",
+  "OllamaEndpoint": "http://0.0.0.0:11434",
+  "LiteLLMEndpoint": "http://0.0.0.0:4000",
+  "RuntimeModelPullsEnabled": true,
+  "ApprovedModelRegistryUrl": "",
+  "RequireLiteLLMApiKey": false
+}

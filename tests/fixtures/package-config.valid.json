@@ -1,0 +1,19 @@
+{
+  "PackageName": "EnterpriseAI Local Runtime and Gateway",
+  "PackageShortName": "EnterpriseAI",
+  "InstallRoot": "C:\\Program Files\\EnterpriseAI",
+  "ProgramDataRoot": "C:\\ProgramData\\EnterpriseAI",
+  "ServiceAccountName": "svc_EnterpriseAI",
+  "OllamaServiceName": "EnterpriseAI-Ollama",
+  "LiteLLMServiceName": "EnterpriseAI-LiteLLM",
+  "OllamaEndpoint": "http://127.0.0.2:11434",
+  "LiteLLMEndpoint": "http://127.0.0.1:4000",
+  "ApprovedModelRegistryUrl": "",
+  "RuntimeModelPullsEnabled": false,
+  "PreserveProgramDataOnUninstall": true,
+  "DisableServiceAccountOnUninstall": true,
+  "RemoveServiceAccountOnUninstall": false,
+  "FirewallRulePrefix": "EnterpriseAI-",
+  "RequireLiteLLMApiKey": true,
+  "FailIfRegistryUrlMissingWhenPullsEnabled": true
+}

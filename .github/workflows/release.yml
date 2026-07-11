@@ -1,0 +1,191 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write  # Required to create GitHub release
+  actions: read
+
+jobs:
+  ci:
+    name: CI Validation
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  build-package:
+    name: Build Release Package
+    needs: ci
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Extract version from tag
+        id: version
+        shell: powershell
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $version = $tag -replace '^v', ''
+          Write-Host "Tag: $tag  Version: $version"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Validate tag matches VERSION file
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tagVersion = '${{ steps.version.outputs.version }}'
+          $fileVersion = (Get-Content 'VERSION' -Raw).Trim()
+          if ($tagVersion -ne $fileVersion) {
+            Write-Host "ERROR: Tag version '$tagVersion' does not match VERSION file '$fileVersion'."
+            Write-Host "Update the VERSION file to match the release tag before tagging."
+            exit 1
+          }
+          Write-Host "Version matches: $tagVersion"
+
+      - name: Validate no PLACEHOLDER values in lock file
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $content = Get-Content 'manifest\dependencies.lock.json' -Raw
+          if ($content -match '"PLACEHOLDER"') {
+            Write-Host "ERROR: dependencies.lock.json contains PLACEHOLDER values. Cannot create release."
+            exit 5
+          }
+          Write-Host "No PLACEHOLDER values found."
+
+      - name: Download and stage vendor dependencies
+        shell: powershell
+        run: |
+          & '.\packaging\New-DependencyBundle.ps1' -OutputPath '.'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify dependency hashes
+        shell: powershell
+        run: |
+          & '.\packaging\Verify-DependencyBundle.ps1'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Generate SBOM
+        shell: powershell
+        run: |
+          & '.\packaging\Generate-Sbom.ps1' -RepoRoot '.'
+
+      - name: Build package ZIP
+        shell: powershell
+        run: |
+          & '.\packaging\Build-Package.ps1' -RepoRoot '.' -OutputDir 'dist' -Version '${{ steps.version.outputs.version }}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Collect release files
+        shell: powershell
+        run: |
+          $version = '${{ steps.version.outputs.version }}'
+          $zipName = "EnterpriseAI-LocalRuntimeGateway-$version-win-x64.zip"
+          $zipPath = "dist\$zipName"
+          $checksumPath = "$zipPath.sha256"
+
+          # Copy lockfile and SBOM to dist
+          Copy-Item 'manifest\dependencies.lock.json' "dist\dependencies.lock.json"
+          Copy-Item 'manifest\sbom.spdx.json' "dist\sbom.spdx.json"
+          Copy-Item 'manifest\hashes.sha256' "dist\hashes.sha256"
+
+          Get-ChildItem dist | Format-Table -AutoSize
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ steps.version.outputs.version }}
+          path: dist/
+          if-no-files-found: error
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+  create-release:
+    name: Create GitHub Release
+    needs: build-package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts-${{ needs.build-package.outputs.version }}
+          path: dist/
+
+      - name: Extract release notes from CHANGELOG
+        id: release_notes
+        run: |
+          VERSION="${{ needs.build-package.outputs.version }}"
+          # Extract the section for this version from CHANGELOG.md
+          NOTES=$(awk "/^## \[$VERSION\]/,/^## \[/" CHANGELOG.md | head -n -1 | tail -n +2 || echo "See CHANGELOG.md for details.")
+          if [ -z "$NOTES" ]; then
+            NOTES="See CHANGELOG.md for details."
+          fi
+          # Write to file to handle multiline
+          echo "$NOTES" > release-notes.txt
+          cat release-notes.txt
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: EnterpriseAI Local Runtime and Gateway v${{ needs.build-package.outputs.version }}
+          body_path: release-notes.txt
+          draft: false
+          prerelease: false
+
+      - name: Attach release ZIP
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/EnterpriseAI-LocalRuntimeGateway-${{ needs.build-package.outputs.version }}-win-x64.zip
+          asset_name: EnterpriseAI-LocalRuntimeGateway-${{ needs.build-package.outputs.version }}-win-x64.zip
+          asset_content_type: application/zip
+
+      - name: Attach checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/EnterpriseAI-LocalRuntimeGateway-${{ needs.build-package.outputs.version }}-win-x64.zip.sha256
+          asset_name: EnterpriseAI-LocalRuntimeGateway-${{ needs.build-package.outputs.version }}-win-x64.zip.sha256
+          asset_content_type: text/plain
+
+      - name: Attach lockfile
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/dependencies.lock.json
+          asset_name: dependencies.lock.json
+          asset_content_type: application/json
+
+      - name: Attach SBOM
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/sbom.spdx.json
+          asset_name: sbom.spdx.json
+          asset_content_type: application/json

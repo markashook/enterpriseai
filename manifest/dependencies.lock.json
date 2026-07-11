@@ -1,0 +1,44 @@
+{
+  "_comment": "Pinned dependency versions and SHA256 hashes for EnterpriseAI package. All values must be set before creating a release. Do not use PLACEHOLDER values in release builds.",
+  "SchemaVersion": "1.0",
+  "GeneratedOn": "PLACEHOLDER",
+  "Dependencies": {
+    "Ollama": {
+      "Version": "PLACEHOLDER",
+      "DownloadUrl": "https://github.com/ollama/ollama/releases/download/vPLACEHOLDER/ollama-windows-amd64.zip",
+      "Sha256": "PLACEHOLDER",
+      "License": "MIT",
+      "LicenseUrl": "https://github.com/ollama/ollama/blob/main/LICENSE",
+      "ArtifactFilename": "ollama-windows-amd64.zip",
+      "VendorPath": "vendor/ollama"
+    },
+    "Python": {
+      "Version": "PLACEHOLDER",
+      "DownloadUrl": "https://www.python.org/ftp/python/PLACEHOLDER/python-PLACEHOLDER-embed-amd64.zip",
+      "Sha256": "PLACEHOLDER",
+      "License": "PSF-2.0",
+      "LicenseUrl": "https://www.python.org/psf/license/",
+      "ArtifactFilename": "python-embed-amd64.zip",
+      "VendorPath": "vendor/python"
+    },
+    "LiteLLM": {
+      "Version": "PLACEHOLDER",
+      "WheelhouseType": "pip-offline",
+      "Sha256": "PLACEHOLDER",
+      "License": "MIT",
+      "LicenseUrl": "https://github.com/BerriAI/litellm/blob/main/LICENSE",
+      "ArtifactFilename": "litellm-wheelhouse.zip",
+      "VendorPath": "vendor/litellm"
+    },
+    "NSSM": {
+      "Version": "PLACEHOLDER",
+      "DownloadUrl": "https://nssm.cc/release/nssm-PLACEHOLDER.zip",
+      "Sha256": "PLACEHOLDER",
+      "License": "Public Domain",
+      "LicenseUrl": "https://nssm.cc/",
+      "ArtifactFilename": "nssm.zip",
+      "VendorPath": "vendor/service-wrapper",
+      "_note": "NSSM may be replaced by native Windows service creation. Remove if not used."
+    }
+  }
+}
